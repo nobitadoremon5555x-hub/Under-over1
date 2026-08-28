@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Under/Over 7 Signal Bot - Melbet Style</title>
+    <title>Under/Over 7 Signal Bot</title>
     
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs - সঠিক CDN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-analytics.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
         
+        // Firebase Config - সঠিক
         const firebaseConfig = {
             apiKey: "AIzaSyC7yXmliI0SrWJ5EaFvo88-p9NI43r2pcY",
             authDomain: "under-ovar.firebaseapp.com",
@@ -160,7 +161,7 @@
             const colors = {
                 "Under 7": "#00e676",
                 "Over 7": "#ff1744",
-                "Equal 7": "#ffea00"
+                "Equal 7": "#ffd600"
             };
             const emojis = {
                 "Under 7": "⬇️",
@@ -179,9 +180,6 @@
                     ${prediction}
                 </div>
                 <div style="font-size:0.9rem;color:#aaa;margin-top:4px;">${desc[prediction]}</div>
-                <div style="font-size:0.7rem;color:#666;margin-top:8px;">
-                    ⚡ Signal generated
-                </div>
             `;
         }
         
@@ -209,461 +207,121 @@
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-        
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: #0a0e17;
-            color: #ffffff;
+            color: #fff;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 16px;
         }
-        
         .container {
-            max-width: 420px;
+            max-width: 400px;
             width: 100%;
-            background: linear-gradient(180deg, #0f1a2a 0%, #0a0e17 100%);
-            border-radius: 28px;
-            padding: 20px 20px 24px;
-            border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* Glow effect */
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(ellipse at 30% 20%, rgba(0, 200, 255, 0.03) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        
-        .header {
-            text-align: center;
-            padding: 8px 0 12px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .header .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .header .logo .ball {
-            font-size: 2rem;
-        }
-        
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff6b35, #f7931e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
-        
-        .header .subtitle {
-            font-size: 0.7rem;
-            color: #4a5a6e;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
-        
-        /* Login Section */
-        #loginSection {
-            padding: 40px 16px;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
-        
-        #loginSection .lock-icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
-        }
-        
-        #loginSection h2 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        
-        #loginSection p {
-            color: #6a7a8e;
-            font-size: 0.85rem;
-            margin-bottom: 24px;
-        }
-        
-        .btn-google {
-            background: #1a2634;
-            border: 1px solid #2a3a4a;
-            color: #fff;
-            padding: 14px 32px;
-            border-radius: 16px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            justify-content: center;
-        }
-        
-        .btn-google:hover {
-            background: #2a3a4a;
-            border-color: #4a6a8a;
-            transform: scale(1.02);
-        }
-        
-        /* User Bar */
-        .user-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 4px 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .user-bar .email {
-            font-size: 0.75rem;
-            color: #6a7a8e;
-            font-weight: 500;
-        }
-        
-        .user-bar .email span {
-            color: #8a9aae;
-        }
-        
-        .btn-logout {
-            background: rgba(255, 23, 68, 0.15);
-            border: none;
-            color: #ff1744;
-            padding: 6px 16px;
+            background: #0f1923;
             border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-logout:hover {
-            background: rgba(255, 23, 68, 0.25);
-        }
-        
-        /* Melbet ID Section */
-        .melbet-box {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 12px 16px;
-            margin: 12px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .melbet-box .label {
-            font-size: 0.7rem;
-            color: #4a5a6e;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-        }
-        
-        .melbet-box input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: 600;
-            outline: none;
-            padding: 6px 0;
-            min-width: 80px;
-        }
-        
-        .melbet-box input::placeholder {
-            color: #3a4a5e;
-            font-weight: 400;
-        }
-        
-        .melbet-box .btn-save {
-            background: linear-gradient(135deg, #00c853, #00e676);
-            border: none;
-            color: #0a0e17;
-            padding: 6px 16px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .melbet-box .btn-save:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0, 230, 118, 0.3);
-        }
-        
-        .melbet-box .status {
-            font-size: 0.65rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        
-        /* Bet Grid - Melbet Style */
-        .bet-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin: 16px 0;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .bet-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 16px 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .bet-card::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            border-radius: 0 0 16px 16px;
-        }
-        
-        .bet-card.under::before { background: linear-gradient(90deg, #00c853, #00e676); }
-        .bet-card.equal::before { background: linear-gradient(90deg, #ffea00, #ffd600); }
-        .bet-card.over::before { background: linear-gradient(90deg, #ff1744, #ff5252); }
-        
-        .bet-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255,255,255,0.15);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-        }
-        
-        .bet-card:active {
-            transform: scale(0.96);
-        }
-        
-        .bet-card .bet-label {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.3px;
-        }
-        
-        .bet-card .bet-odds {
-            font-size: 0.7rem;
-            color: #6a7a8e;
-            font-weight: 600;
-            margin-top: 4px;
-            display: block;
-        }
-        
-        .bet-card .bet-odds span {
-            color: #ffd600;
-            font-weight: 700;
-        }
-        
-        .bet-card.under .bet-odds span { color: #00e676; }
-        .bet-card.equal .bet-odds span { color: #ffd600; }
-        .bet-card.over .bet-odds span { color: #ff5252; }
-        
-        /* Auto Signal Button */
-        .btn-auto-signal {
-            width: 100%;
-            background: linear-gradient(135deg, #7c4dff, #651fff);
-            border: none;
-            color: #fff;
-            padding: 14px;
-            border-radius: 16px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .btn-auto-signal:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(101, 31, 255, 0.3);
-        }
-        
-        .btn-auto-signal .badge {
-            background: rgba(255,255,255,0.15);
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: 600;
-        }
-        
-        /* Result Box */
-        .result-box {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
             padding: 20px;
-            margin: 16px 0;
-            text-align: center;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 1;
-            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.06);
         }
+        .header { text-align: center; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 16px; }
+        .header h1 { font-size: 1.2rem; font-weight: 700; }
+        .header h1 span { color: #f5a623; }
         
-        .result-box .placeholder {
-            color: #3a4a5e;
-            font-size: 0.85rem;
-        }
+        .user-bar { display: flex; justify-content: space-between; align-items: center; padding: 6px 0 12px; }
+        .user-bar .email { font-size: 0.7rem; color: #6a7a8e; }
+        .user-bar .email strong { color: #aab8c9; }
+        .btn-logout { background: rgba(255,23,68,0.12); border: none; color: #ff1744; padding: 4px 14px; border-radius: 14px; font-size: 0.65rem; font-weight: 600; cursor: pointer; }
         
-        /* Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 8px;
-            margin: 12px 0;
-            position: relative;
-            z-index: 1;
-        }
+        .melbet-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .melbet-box .label { font-size: 0.65rem; color: #4a5a6e; font-weight: 600; }
+        .melbet-box input { flex: 1; background: transparent; border: none; color: #fff; font-size: 0.85rem; font-weight: 600; outline: none; padding: 4px 0; min-width: 60px; }
+        .melbet-box input::placeholder { color: #3a4a5e; font-weight: 400; font-size: 0.75rem; }
+        .melbet-box .btn-save { background: linear-gradient(135deg, #00c853, #00e676); border: none; color: #0a0e17; padding: 4px 14px; border-radius: 10px; font-size: 0.6rem; font-weight: 700; cursor: pointer; }
+        .melbet-box .status { font-size: 0.6rem; font-weight: 600; }
         
-        .stat-item {
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            padding: 10px 4px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.04);
-        }
+        .odds-title { font-size: 0.75rem; color: #6a7a8e; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; text-align: center; }
         
-        .stat-item .number {
-            font-size: 1.5rem;
-            font-weight: 800;
-            display: block;
-            line-height: 1.2;
-        }
+        .bet-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+        .bet-card { background: #1a2634; border-radius: 14px; padding: 14px 6px; text-align: center; cursor: pointer; transition: all 0.25s; border: 2px solid transparent; }
+        .bet-card:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-1px); }
+        .bet-card:active { transform: scale(0.95); }
+        .bet-card .bet-label { font-size: 0.9rem; font-weight: 700; color: #fff; }
+        .bet-card .bet-odds { font-size: 0.8rem; font-weight: 600; color: #8a9aae; margin-top: 4px; display: block; }
+        .bet-card .bet-odds span { font-weight: 700; }
+        .bet-card.under { border-bottom: 3px solid #00e676; }
+        .bet-card.under .bet-odds span { color: #00e676; }
+        .bet-card.equal { border-bottom: 3px solid #ffd600; }
+        .bet-card.equal .bet-odds span { color: #ffd600; }
+        .bet-card.over { border-bottom: 3px solid #ff1744; }
+        .bet-card.over .bet-odds span { color: #ff1744; }
         
-        .stat-item .stat-label {
-            font-size: 0.6rem;
-            color: #4a5a6e;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .bet-controls { display: flex; align-items: center; justify-content: space-between; background: #1a2634; border-radius: 12px; padding: 8px 14px; margin-bottom: 14px; }
+        .bet-controls .btn-control { background: transparent; border: none; color: #8a9aae; font-size: 0.75rem; font-weight: 700; cursor: pointer; padding: 4px 10px; border-radius: 8px; }
+        .bet-controls .btn-control:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .bet-controls .bet-amount { font-size: 0.9rem; font-weight: 700; color: #f5a623; }
         
+        .btn-auto-signal { width: 100%; background: linear-gradient(135deg, #7c4dff, #651fff); border: none; color: #fff; padding: 12px; border-radius: 14px; font-size: 0.85rem; font-weight: 700; cursor: pointer; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-auto-signal:hover { transform: scale(1.02); }
+        .btn-auto-signal .badge { background: rgba(255,255,255,0.12); padding: 2px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 600; }
+        
+        .result-box { background: #0f1923; border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 18px; margin-bottom: 14px; text-align: center; min-height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .result-box .placeholder { color: #3a4a5e; font-size: 0.8rem; }
+        
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+        .stat-item { background: #0f1923; border-radius: 10px; padding: 8px 2px; text-align: center; border: 1px solid rgba(255,255,255,0.03); }
+        .stat-item .number { font-size: 1.2rem; font-weight: 800; display: block; }
+        .stat-item .stat-label { font-size: 0.5rem; color: #4a5a6e; font-weight: 600; text-transform: uppercase; }
         .stat-item.under .number { color: #00e676; }
         .stat-item.over .number { color: #ff5252; }
         .stat-item.equal .number { color: #ffd600; }
         .stat-item.total .number { color: #448aff; }
         
-        /* Footer */
-        .footer {
-            text-align: center;
-            font-size: 0.6rem;
-            color: #2a3a4a;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255,255,255,0.04);
-            position: relative;
-            z-index: 1;
-            letter-spacing: 0.5px;
-        }
-        
-        .footer span {
-            color: #ff6b35;
-        }
+        .footer { text-align: center; font-size: 0.55rem; color: #2a3a4a; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.03); }
+        .footer span { color: #ff6b35; }
         
         #loginSection { display: none; }
         #appSection { display: none; }
         
-        /* Responsive */
         @media (max-width: 400px) {
-            .container { padding: 16px; }
-            .bet-card .bet-label { font-size: 0.75rem; }
-            .stat-item .number { font-size: 1.2rem; }
-            .melbet-box { flex-wrap: wrap; gap: 6px; }
-            .melbet-box input { min-width: 60px; }
+            .container { padding: 14px; }
+            .bet-card .bet-label { font-size: 0.8rem; }
+            .bet-card .bet-odds { font-size: 0.7rem; }
+            .stat-item .number { font-size: 1rem; }
+            .melbet-box { flex-wrap: wrap; gap: 4px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        
-        <!-- Header -->
         <div class="header">
-            <div class="logo">
-                <span class="ball">⚽</span>
-                <h1>Under / Over 7</h1>
-            </div>
-            <div class="subtitle">Signal Bot v2.0</div>
+            <h1>⚽ <span>Under</span> / <span>Over</span> 7</h1>
         </div>
         
-        <!-- Login Section -->
         <div id="loginSection">
-            <div class="lock-icon">🔐</div>
-            <h2>Welcome Back</h2>
-            <p>Sign in with your Google account to continue</p>
-            <button class="btn-google" id="loginBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Sign in with Google
-            </button>
+            <div style="text-align:center;padding:30px 0;">
+                <div style="font-size:3rem;margin-bottom:12px;">🔐</div>
+                <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">Welcome Back</h2>
+                <p style="color:#6a7a8e;font-size:0.8rem;margin-bottom:20px;">Sign in with your Google account</p>
+                <button id="loginBtn" style="background:#1a2634;border:1px solid #2a3a4a;color:#fff;padding:12px 24px;border-radius:14px;font-size:0.9rem;font-weight:600;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Sign in with Google
+                </button>
+            </div>
         </div>
         
-        <!-- App Section -->
         <div id="appSection">
-            
-            <!-- User Bar -->
             <div class="user-bar">
-                <div class="email">👤 <span id="userEmail">user@gmail.com</span></div>
+                <div class="email">👤 <strong id="userEmail">user@gmail.com</strong></div>
                 <button class="btn-logout" id="logoutBtn">Logout</button>
             </div>
             
-            <!-- Melbet ID -->
             <div class="melbet-box">
                 <span class="label">🎰 ID</span>
                 <input type="text" id="melbetId" placeholder="Enter Melbet ID" />
@@ -671,34 +329,40 @@
                 <span class="status" id="melbetStatus">⚠️ Not set</span>
             </div>
             
-            <!-- Bet Grid -->
+            <div class="odds-title">Select your odds</div>
+            
             <div class="bet-grid">
-                <div class="bet-card under" id="underBtn">
-                    <div class="bet-label">Under 7</div>
-                    <div class="bet-odds">Odds <span>x 2.3</span></div>
+                <div class="bet-card over" id="overBtn">
+                    <div class="bet-label">Over 7</div>
+                    <div class="bet-odds">x <span>2.3</span></div>
                 </div>
                 <div class="bet-card equal" id="equalBtn">
                     <div class="bet-label">Equal 7</div>
-                    <div class="bet-odds">Odds <span>x 5.8</span></div>
+                    <div class="bet-odds">x <span>5.8</span></div>
                 </div>
-                <div class="bet-card over" id="overBtn">
-                    <div class="bet-label">Over 7</div>
-                    <div class="bet-odds">Odds <span>x 2.3</span></div>
+                <div class="bet-card under" id="underBtn">
+                    <div class="bet-label">Under 7</div>
+                    <div class="bet-odds">x <span>2.3</span></div>
                 </div>
             </div>
             
-            <!-- Auto Signal -->
+            <div class="bet-controls">
+                <button class="btn-control">MIN</button>
+                <button class="btn-control">×2</button>
+                <button class="btn-control">×12</button>
+                <button class="btn-control">MAX</button>
+                <span class="bet-amount">40 BDT</span>
+            </div>
+            
             <button class="btn-auto-signal" id="autoSignalBtn">
                 🎯 Auto Signal
                 <span class="badge">47/47/6</span>
             </button>
             
-            <!-- Result -->
             <div class="result-box" id="betResult">
-                <div class="placeholder">Select an option above to get signal</div>
+                <div class="placeholder">Press a button to get signal</div>
             </div>
             
-            <!-- Stats -->
             <div class="stats-grid">
                 <div class="stat-item under">
                     <span class="number" id="underStat">0</span>
@@ -718,12 +382,10 @@
                 </div>
             </div>
             
-            <!-- Footer -->
             <div class="footer">
                 ⚡ Signal Bot v2.0 &bull; <span>Auto-saves</span> to Firebase
             </div>
         </div>
-        
     </div>
 </body>
 </html>
